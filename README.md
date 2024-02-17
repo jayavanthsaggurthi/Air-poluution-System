@@ -8,7 +8,9 @@ MQ135 Gas sensor
 MQ 7 LPG gas sensor
 Buzzer
 LEDs
-System Architecture:![image](https://github.com/jayavanthsaggurthi/Air-poluution-System/assets/116862373/1dd6ed36-f73f-4e0e-9a4f-2e8775d7ef6f)
+System Architecture:
+![image](https://github.com/jayavanthsaggurthi/Air-poluution-System/assets/116862373/15678f3c-004f-4732-933d-5a445fd7faa8)
+
 
 architecture
 
@@ -52,17 +54,18 @@ However, in order to get the real value of the gas concentration according to th
 
 
 
-Datasheets for:![image](https://github.com/jayavanthsaggurthi/Air-poluution-System/assets/116862373/cfd17419-4ecc-4973-a33e-520ddfdf1eb9)
+Datasheets for:
+![image](https://github.com/jayavanthsaggurthi/Air-poluution-System/assets/116862373/cfd17419-4ecc-4973-a33e-520ddfdf1eb9)
 
 
 MQ135
 MQ7
 Results:
- ![image](https://github.com/jayavanthsaggurthi/Air-poluution-System/assets/116862373/13bae5d7-3958-46e8-84d3-eeb8d098e258)
+![image](https://github.com/jayavanthsaggurthi/Air-poluution-System/assets/116862373/13bae5d7-3958-46e8-84d3-eeb8d098e258)
 ![image](https://github.com/jayavanthsaggurthi/Air-poluution-System/assets/116862373/1d157616-e5bb-4fd6-a84a-76c893f0ea12)
 ![image](https://github.com/jayavanthsaggurthi/Air-poluution-System/assets/116862373/3d90f95a-5bc0-48a3-a1a6-d5f604d33ecf)
 
-Thingspeak server data
+ 
 
 
 
