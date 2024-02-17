@@ -1,187 +1,68 @@
-# Air-poluution-System
+ This is IOT based Air Pollution Monitoring System which measures indoor harmful gases present in air like Carbon Dioxide(CO2) using an MQ135 gas sensor and Carbon Monoxide(CO) using an MQ7 sensor. It will show the air quality in PPM(Parts Per Million) on the LCD and as well as on Thingspeak so that we can monitor it very easily in PPM.
+
+Components Requirement:
+Arduino Uno
+Wi-Fi module Node-MCU ESP8266
+16x2 LCD
+MQ135 Gas sensor
+MQ 7 LPG gas sensor
+Buzzer
+LEDs
+System Architecture:![image](https://github.com/jayavanthsaggurthi/Air-poluution-System/assets/116862373/1dd6ed36-f73f-4e0e-9a4f-2e8775d7ef6f)
+
+architecture
+
+Software Requirement:
+Arduino IDE
+Arduino IDE used to upload programming in Arduino board and Node-MCU board with required library.
+
+Thingspeak
+ThingSpeak is an IoT analytics platform service that allows you to aggregate, visualize, and analyze live data streams in the cloud. You can send data to ThingSpeak from your devices, create instant visualization of live data, and send alerts.
+
+Measurement:
+The most important step is to calibrate the sensor in fresh air and then draw an equation that converts the sensor output voltage value into our convenient units PPM (parts per million). Here are the mathematical calculations derived:
+![image](https://github.com/jayavanthsaggurthi/Air-poluution-System/assets/116862373/47665939-7778-4b80-a1fa-42181e89cf38)
 
 
-# coding: utf-8
 
-# In[33]:
-
-
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-get_ipython().magic('matplotlib inline')
-import seaborn as sns
-import datetime 
-import matplotlib.dates as md
+For a log-log scale, the formula looks like this:
+![image](https://github.com/jayavanthsaggurthi/Air-poluution-System/assets/116862373/57c94467-d63c-4c50-ac96-cd672386dca6)
 
 
-# In[71]:
+
+Let’s find the slope. The formula to calculate slope m(here) is the following:
+![image](https://github.com/jayavanthsaggurthi/Air-poluution-System/assets/116862373/34c8da27-4e7d-42fd-b28d-40e361a47108)
 
 
-df=pd.read_csv('pollution.csv')
-df.head()
+
+If we apply the logarithmic quotient rule we get the following:
+![image](https://github.com/jayavanthsaggurthi/Air-poluution-System/assets/116862373/30a7fc5a-4f39-422b-9006-219fc48c1fa5)
 
 
-# In[72]:
+
+Now we substitute the values for x, x0, y, and y0. Now that we have m and b, we can find the gas concentration for any ratio with the following formula:
+![image](https://github.com/jayavanthsaggurthi/Air-poluution-System/assets/116862373/5bb8898f-b5d4-448a-984d-8559c460a289)
 
 
-df.drop("entry_id",axis=1,inplace=True)
-df.head()
+
+Using this we will be able to convert the sensor output values into PPM (Parts per Million)
+
+However, in order to get the real value of the gas concentration according to the log-log plot we need to find the inverse log of x:
+![image](https://github.com/jayavanthsaggurthi/Air-poluution-System/assets/116862373/6df59556-0b7b-4a0f-87b9-5d8c84ad5560)
 
 
-# In[73]:
+
+Datasheets for:![image](https://github.com/jayavanthsaggurthi/Air-poluution-System/assets/116862373/cfd17419-4ecc-4973-a33e-520ddfdf1eb9)
 
 
-#finding out the time when max. pollution occurs at Chadni Chowk
-df[df['Chadni Chowk']==3.0235897439999997].drop(['Gariahat','Dharmatala'],axis=1)
+MQ135
+MQ7
+Results:
+ ![image](https://github.com/jayavanthsaggurthi/Air-poluution-System/assets/116862373/13bae5d7-3958-46e8-84d3-eeb8d098e258)
+![image](https://github.com/jayavanthsaggurthi/Air-poluution-System/assets/116862373/1d157616-e5bb-4fd6-a84a-76c893f0ea12)
+![image](https://github.com/jayavanthsaggurthi/Air-poluution-System/assets/116862373/3d90f95a-5bc0-48a3-a1a6-d5f604d33ecf)
+
+Thingspeak server data
 
 
-# In[74]:
 
-
-#finding out the time when max. pollution occurs at Gariahat
-df[df['Gariahat']==3.0235897439999997].drop(['Chadni Chowk','Dharmatala'],axis=1)
-
-
-# In[75]:
-
-
-#finding out the time when max. pollution occurs at Dharmatala
-df[df['Dharmatala']==3.0235897439999997].drop(['Chadni Chowk','Gariahat'],axis=1)
-
-
-# In[96]:
-
-
-#finding out pollution level at Chadni Chowk by hourly update
-plt.figure(figsize=(12,8))
-plt.rcParams.update({'font.size':15})
-x =pd.to_datetime(df['created_at'])
-y=df['Chadni Chowk']
-plt.plot_date(x, y)
-plt.xlabel("Data & Hour")
-plt.ylabel("Pollution Level")
-plt.title("Hourly Pollution Level at Chadni Chowk")
-
-
-# In[97]:
-
-
-#finding out pollution level at Gariahat by hourly update
-plt.figure(figsize=(12,8))
-plt.rcParams.update({'font.size':15})
-x =pd.to_datetime(df['created_at'])
-y=df['Gariahat']
-plt.plot_date(x, y,color='green')
-plt.xlabel("Data & Hour")
-plt.ylabel("Pollution Level")
-plt.title("Hourly Pollution Level at Gariahat")
-
-
-# In[98]:
-
-
-#finding out pollution level at Dharmatala by hourly update
-plt.figure(figsize=(12,8))
-plt.rcParams.update({'font.size':15})
-x =pd.to_datetime(df['created_at'])
-y=df['Dharmatala']
-plt.plot_date(x, y,color='red')
-plt.xlabel("Data & Hour")
-plt.ylabel("Pollution Level")
-plt.title("Hourly Pollution Level at Dharmatala")
-
-
-# In[95]:
-
-
-#pairplotting
-sns.set(font_scale=1.5)
-g=sns.pairplot(df,hue="Chadni Chowk")
-g.fig.set_size_inches(15,15)
-
-
-# In[108]:
-
-
-sns.jointplot(x="Chadni Chowk",y="Gariahat",data=df,color='green')
-
-
-# In[109]:
-
-
-sns.jointplot(x="Chadni Chowk",y="Dharmatala",data=df,color='red')
-
-
-# In[113]:
-
-
-sns.jointplot(x="Dharmatala",y="Gariahat",data=df,color='k')
-#include <ESP8266WiFi.h>  
- #include <WiFiClient.h>  
- #include <ThingSpeak.h>
- #include<Servo.h>
- Servo servo_test;
- int gas = A0; 
- int angle=0;   
- const char* ssid = "Red Devil";  
- const char* password = "pqrs123456";  
- WiFiClient client;  
- unsigned long myChannelNumber = 318444;  
- const char * myWriteAPIKey = "T4WKJK0X7FLAV3BL";    
- void setup()  
- {
-  pinMode(D0,OUTPUT); 
-  pinMode(D1,OUTPUT); 
-  pinMode(gas,INPUT);  
-  servo_test.attach(D2);
-  Serial.begin(115200);  
-  delay(10);  
-  // Connect to WiFi network  
-  Serial.println();  
-  Serial.println();
-  Serial.print("Connecting to ");  
-  Serial.println(ssid);  
-  WiFi.begin(ssid, password);  
-  while (WiFi.status() != WL_CONNECTED)  
-  {  
-   delay(500);  
-   Serial.print(".");  
-  }  
-  Serial.println("");  
-  Serial.println("WiFi connected");  
-  // Print the IP address  
-  Serial.println(WiFi.localIP());  
-  ThingSpeak.begin(client);
- }  
- void loop()   
- {  
-  static boolean data_state = true;  
-  int sensorValue = analogRead(gas);
- float a = sensorValue*(5.0/1023.0);
-  if(a>1)
-  {
-       ThingSpeak.writeField(myChannelNumber,  2,a , myWriteAPIKey);
-      Serial.println("uploaded");
-      digitalWrite(D1,LOW);
-          digitalWrite(D0,HIGH);
-    for(angle = 0; angle < 180; angle += 1)    // command to move from 0 degrees to 180 degrees 
-  {                                  
-    servo_test.write(angle);                 //command to rotate the servo to the specified angle
-    delay(15);                       
-  }  
-  }
-  else
-  {
-        digitalWrite(D0,LOW);
-        digitalWrite(D1,HIGH);
-       ThingSpeak.writeField(myChannelNumber,  2,a , myWriteAPIKey);
-      Serial.println("uploaded");
-  }
-  Serial.println(a);
-  delay(1000);
-
-  // Write to ThingSpeak. There are up to 8 fields in a channel, allowing you to store up to 8 different  
-  // pieces of information in a channel. Here, we write to field 1. 
-  delay(1000); // ThingSpeak will only accept updates every 1 second.  
- }
